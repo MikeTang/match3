@@ -22,11 +22,10 @@ public class Board : MonoBehaviour{
     	for (int i = 0; i < width; i ++){
     		for (int j = 0; j < height; j ++){
     			Vector2 tempPosition = new Vector2(i,j);
-    			// GameObject backgroundTile = Instantiate(tilePrefab, tempPosition, Quaternion.identity) as GameObject;
-    			// backgroundTile.transform.parent = this.transform;
-    			// backgroundTile.name = "board (" + i + "," + j + ")";
-    			int blockToUse = Random.Range(0, blocks.Length);
-		    	GameObject block = Instantiate(blocks[blockToUse], tempPosition, Quaternion.identity);
+
+                //int blockToUse = Random.Range(0, blocks.Length);
+                int blockToUse = Random.Range(0, 6);
+                GameObject block = Instantiate(blocks[blockToUse], tempPosition, Quaternion.identity);
 		    	block.transform.parent = this.transform;
 		    	block.name = "block (" + i + "," + j + ")";
 		    	allBlocks[i,j] = block;
