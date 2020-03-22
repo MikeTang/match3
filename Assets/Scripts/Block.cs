@@ -55,7 +55,8 @@ public class Block : MonoBehaviour
         }
     }
 
-    private void OnMouseDown() {
+    public void OnMouseDown() {
+        //StartCoroutine(WaitTillNextScene());
         firstTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         //DestroySameColor();
         int count = 0;
@@ -71,10 +72,11 @@ public class Block : MonoBehaviour
                 board.allBlocks[block_x, block_y] = null;
             }
         }
-        StartCoroutine(board.DecreaseRowCo());
+        board.checkBoard();
 
     }
 
+    //check if neighboring blocks are of the same color (left, up, right, down)
     public List<GameObject> findConnectedBlocks(GameObject block)
     {
         List<GameObject> connectedBlocks = new List<GameObject>();
@@ -103,10 +105,9 @@ public class Block : MonoBehaviour
         return connectedBlocks;
     }
 
+    //look for neighboring blocks of the same color and recursively check for those blocks' neighors
     public int findBlocksToDestroyRecursive(int value, ref int count, GameObject block) {
-        //look for neighboring blocks and check if they're the same color and recursively
-        //check for those blocks' neighors
-
+        
         count++;
         if (value >= 50) //avoid infinite loop
         {
