@@ -7,8 +7,12 @@ public class Block : MonoBehaviour
     public int x_pos;
     public int y_pos;
 
+    public int targetX;
+    public int targetY;
+
     private Board board;
     private Vector2 firstTouchPosition;
+    private Vector2 tempPosition;
     private List<GameObject> blocksToDestroy = new List<GameObject>();
 
 
@@ -16,14 +20,39 @@ public class Block : MonoBehaviour
     void Start()
     {
         board = FindObjectOfType<Board>();
-        x_pos = (int)transform.position.x;
-        y_pos = (int)transform.position.y;
+
+        targetX = (int)transform.position.x;
+        targetY = (int)transform.position.y;
+        x_pos = targetX;
+        y_pos = targetY;
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        targetX = x_pos;
+        targetY = y_pos;
+        if (Mathf.Abs(targetX - transform.position.x) > .1){
+            tempPosition = new Vector2(targetX, transform.position.y);
+            transform.position = Vector2.Lerp(transform.position, tempPosition, .2f);
+            if(board.allBlocks[x_pos, y_pos] != this.gameObject){
+                board.allBlocks[x_pos, y_pos] = this.gameObject;
+            }
+        }else{
+            tempPosition = new Vector2(targetX, transform.position.y);
+            transform.position = tempPosition;
 
+        }if (Mathf.Abs(targetY - transform.position.y) > .1){
+            tempPosition = new Vector2(transform.position.x, targetY);
+            transform.position = Vector2.Lerp(transform.position, tempPosition, .2f);
+            if(board.allBlocks[x_pos, y_pos] != this.gameObject){
+                board.allBlocks[x_pos, y_pos] = this.gameObject;
+            }
+        }else{
+            tempPosition = new Vector2(transform.position.x, targetY);
+            transform.position = tempPosition;
+        }
     }
 
     private void OnMouseDown() {
@@ -31,14 +60,18 @@ public class Block : MonoBehaviour
         //DestroySameColor();
         int count = 0;
         findBlocksToDestroyRecursive(0, ref count, this.gameObject);
-        Debug.Log(blocksToDestroy.Count);
+        // Debug.Log(blocksToDestroy.Count);
         foreach (GameObject blockToDestroy in blocksToDestroy)
         {
             if (blockToDestroy != null)
             {
+                int block_x = (int)blockToDestroy.transform.position.x;
+                int block_y = (int)blockToDestroy.transform.position.y;
                 Destroy(blockToDestroy);
+                board.allBlocks[block_x, block_y] = null;
             }
         }
+        StartCoroutine(board.DecreaseRowCo());
 
     }
 
